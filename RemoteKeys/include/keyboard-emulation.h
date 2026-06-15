@@ -11,6 +11,11 @@
 #include "globals.h"
 #include <windows.h>
 
+#define MAT_MOD_CTRL  0x01
+#define MAT_MOD_SHIFT 0x02
+#define MAT_MOD_ALT   0x04
+#define MAT_MOD_WIN   0x08
+
 /**
 * Finds and Target application by its title/class name and forces it into focus to receive keyboard commands
 * @param window_title The string name of the application window to search for

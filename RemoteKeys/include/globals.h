@@ -44,13 +44,13 @@ typedef enum AppState {
 typedef struct AppConfig {
 	int comPortNumber;				//The COM Port to open for connection
 	int baudRate;					//The baud rate to use to communicate with the device
-	struct keyCommand* commands;	//Dynamic Array of your key mappings
+	struct KeyCommand* commands;	//Dynamic Array of your key mappings
 	int commandCount;				//The total number of mappings loaded from the INI (6 max rn)
 };
 
 //represent the mapping of  a single key to trigger a windows action
 typedef struct KeyCommand {
-	char triggerID[6]; // Serial data string send from the esp32
+	char triggerID[11]; // Serial data string send from the esp32
 	char focusApplication[32]; // the name of the application to send commands too
 	int virtualKeyCode[MAX_MACRO_KEYS];// the windows hex equvilent for executing the command as an array for multiple key presses per action
 	int modifierFlags[MAX_MACRO_KEYS]; // For id shift, Ctrl, Alt should be held at any point. A matching array for key presses to match the virtual keycode array
@@ -59,7 +59,7 @@ typedef struct KeyCommand {
 
 //This is the thread safe que the serial thread writes here and the main thread reads here
 typedef struct SharedBuffer {
-	char pendingCommand[16];// the last command recieved
+	char pendingCommand[64];// the last command recieved
 	bool hasNewData; // a flag to tell the main thread ther is work to preform
 	CRITICAL_SECTION lock; // the windows sync object to prevent race conditions
 };

@@ -24,7 +24,7 @@ DWORD WINAPI comm_listener_thread(LPVOID lpParam);
 /**
 * Safely closes the COM port handle and resets state
 */
-void com_close(struct GlobalContext* ctx);
+void comm_close(struct GlobalContext* ctx);
 
 /**
 * Helper function to validate if the current handle is still valid.
