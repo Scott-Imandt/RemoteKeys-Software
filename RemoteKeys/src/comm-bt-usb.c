@@ -82,11 +82,11 @@ DWORD WINAPI comm_listener_thread(LPVOID lpParam) {
 	}
 	
 	// Accumulation buffer to assemble incoming raw bytes into a full text command string
-	char input_accumulator[SHARED_BUFFER_SIZE];// Need to put SHARED_BUFFER_SIZE
+	char input_accumulator[SHARED_BUFFER_SIZE];
 	int accumulator_index = 0;
 	memset(input_accumulator, 0, sizeof(input_accumulator));
 
-	printf("Entering Core Logic thread");
+	printf("Entering Core comm-bt-usb Logic thread");
 
 	//CORE LOGIC EXECUTION
 	while (ctx->currentState != STATE_SHUTTINGDOWN) {

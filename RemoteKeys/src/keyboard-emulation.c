@@ -59,28 +59,28 @@ HWND window_control_focus(const char* window_title)
 
 int keyboard_emulate_input(WORD virtual_key, int modifier_flags)
 {
-    // An array to hold the chronological keystroke events (Max 8: 3 mods + 1 key, all down & up)
+    // An array to hold the chronological keystroke events
     INPUT inputs[10] = { 0 };
     int eventCount = 0;
 
     // --- PHASE 1: PRESS MODIFIERS DOWN ---
-    if (modifier_flags & MAT_MOD_CTRL) {
+    if (modifier_flags & MAT_MOD_CTRL) {            //Modifier For CTRL
         inputs[eventCount].type = INPUT_KEYBOARD;
         inputs[eventCount].ki.wVk = VK_CONTROL;
         eventCount++;
     }
-    if (modifier_flags & MAT_MOD_SHIFT) {
+    if (modifier_flags & MAT_MOD_SHIFT) {           //Modifier For SHIFT
         inputs[eventCount].type = INPUT_KEYBOARD;
         inputs[eventCount].ki.wVk = VK_SHIFT;
         eventCount++;
     }
-    if (modifier_flags & MAT_MOD_ALT) {
+    if (modifier_flags & MAT_MOD_ALT) {             //Modifier For ALT
         inputs[eventCount].type = INPUT_KEYBOARD;
         inputs[eventCount].ki.wVk = VK_MENU;
         eventCount++;
     }
 
-    if (modifier_flags & MAT_MOD_WIN) {
+    if (modifier_flags & MAT_MOD_WIN) {             //Modifier For Windows Key
         inputs[eventCount].type = INPUT_KEYBOARD;
         inputs[eventCount].ki.wVk = VK_LWIN;
         eventCount++;
@@ -101,27 +101,27 @@ int keyboard_emulate_input(WORD virtual_key, int modifier_flags)
 
     // --- PHASE 4: RELEASE MODIFIERS UP ---
     // It is standard practice to release modifiers in the reverse order they were pressed
-    if (modifier_flags & MAT_MOD_WIN) {
+    if (modifier_flags & MAT_MOD_WIN) {             //Modifier For Windows Key
         inputs[eventCount].type = INPUT_KEYBOARD;
         inputs[eventCount].ki.wVk = VK_LWIN;
         inputs[eventCount].ki.dwFlags = KEYEVENTF_KEYUP;
         eventCount++;
     }
         
-    if (modifier_flags & MAT_MOD_ALT) {
+    if (modifier_flags & MAT_MOD_ALT) {             //Modifier For ALT
         inputs[eventCount].type = INPUT_KEYBOARD;
         inputs[eventCount].ki.wVk = VK_MENU;
         inputs[eventCount].ki.dwFlags = KEYEVENTF_KEYUP;
         eventCount++;
     }
-    if (modifier_flags & MAT_MOD_SHIFT) {
+    if (modifier_flags & MAT_MOD_SHIFT) {           //Modifier For SHIFT
         inputs[eventCount].type = INPUT_KEYBOARD;
         inputs[eventCount].ki.wVk = VK_SHIFT;
         inputs[eventCount].ki.dwFlags = KEYEVENTF_KEYUP;
         eventCount++;
     }
-    if (modifier_flags & MAT_MOD_CTRL) {
-        inputs[eventCount].type = INPUT_KEYBOARD;
+    if (modifier_flags & MAT_MOD_CTRL) {            //Modifier For CTRL
+        inputs[eventCount].type = INPUT_KEYBOARD;   
         inputs[eventCount].ki.wVk = VK_CONTROL;
         inputs[eventCount].ki.dwFlags = KEYEVENTF_KEYUP;
         eventCount++;
