@@ -13,7 +13,7 @@ typedef struct IniDefaults {
 	int comPort;
 	int baudRate;
 	bool loggingEnabled;
-};
+} IniDefaults;
 
 typedef enum iniState {
 	INI_STATE_UNKNOWN = 0,
@@ -21,7 +21,7 @@ typedef enum iniState {
 	INI_STATE_FILE_NOT_FOUND=-2, // Call create_default_config
 	INI_STATE_MEMORY_ERROR=-3,// Log "Out of Memory" and close program
 	INI_STATE_SYNTAX_ERROR=-4 // Log "invalid INI and exit"
-};
+} iniState;
 
 
 /*
