@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -132,17 +132,17 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\comm-bt-usb.c" />
+    <ClCompile Include="src\ini-parser.c" />
     <ClCompile Include="src\keyboard-emulation.c" />
     <ClCompile Include="src\logging-system.c" />
     <ClCompile Include="src\main.c" />
-    <ClCompile Include="src\xml-parser.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\comm-bt-usb.h" />
     <ClInclude Include="include\globals.h" />
+    <ClInclude Include="include\ini-parser.h" />
     <ClInclude Include="include\keyboard-emulation.h" />
     <ClInclude Include="include\logging-system.h" />
-    <ClInclude Include="include\xml-parser.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

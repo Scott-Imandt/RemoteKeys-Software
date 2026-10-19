@@ -20,9 +20,9 @@ typedef enum LogLevel {
 };
 
 //setter
-void log_set_level(struct GlobalContext* GLOBALCONTEXT, LogLevel level);
+void log_set_level(struct GlobalContext* GLOBALCONTEXT, enum LogLevel level);
 //getter
-LogLevel log_get_level(struct GlobalContext* GLOBALCONTEXT);
+enum LogLevel log_get_level(struct GlobalContext* GLOBALCONTEXT);
 
 
 
@@ -34,7 +34,7 @@ LogLevel log_get_level(struct GlobalContext* GLOBALCONTEXT);
     Returns boolean value, true (success) false (failure)
     reminder: InitializeCriticalSection(&GLOBALCONTEXT->logLock)
 */
-bool log_init(struct GlobalContext* GLOBALCONTEXT, const char* logfile_path, LogLevel level);
+bool log_init(struct GlobalContext* GLOBALCONTEXT, const char* logfile_path, enum LogLevel level);
     
 
 //----SHUTDOWN----
@@ -54,7 +54,7 @@ void log_shutdown(struct GlobalContext* GLOBALCONTEXT);
 
     Will be called by wrapper functions depending on loglevel. function is thread-safe
 **/ 
-void log_write(struct GlobalContext* GLOBALCONTEXT, LogLevel level, const char* format, ...);
+void log_write(struct GlobalContext* GLOBALCONTEXT, enum LogLevel level, const char* format, ...);
 
 /* 
     Wrappers for each of the def LogLevel.

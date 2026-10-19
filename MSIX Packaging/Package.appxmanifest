@@ -31,8 +31,8 @@
       Executable="$targetnametoken$.exe"
       EntryPoint="$targetentrypoint$">
       <uap:VisualElements
-        DisplayName="FTR-RK"
-        Description="FTR Companion Application to allow interface between FTR and FTR-RK Device"
+        DisplayName="RemoteKeys"
+        Description="Companion Application to allow interface between devices"
         BackgroundColor="transparent"
         Square150x150Logo="Images\Square150x150Logo.png"
         Square44x44Logo="Images\Square44x44Logo.png">

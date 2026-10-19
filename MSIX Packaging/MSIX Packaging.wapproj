@@ -56,8 +56,9 @@
     <DefaultLanguage>en-US</DefaultLanguage>
     <AppxPackageSigningEnabled>True</AppxPackageSigningEnabled>
     <NoWarn>$(NoWarn);NU1702</NoWarn>
-    <PackageCertificateThumbprint>432A2F1874BDA8E3F8AFB446D795023759CF29B9</PackageCertificateThumbprint>
-    <EntryPointProjectUniqueName>..\FTR-RK Software\FTR-RK Software.vcxproj</EntryPointProjectUniqueName>
+    <PackageCertificateThumbprint>FD46B5303E091BF1E0CB18A237793B915E5B7BE0</PackageCertificateThumbprint>
+    <EntryPointProjectUniqueName>..\RemoteKeys\RemoteKeys.vcxproj</EntryPointProjectUniqueName>
+    <PackageCertificateKeyFile>MSIX Packaging_TemporaryKey.pfx</PackageCertificateKeyFile>
   </PropertyGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest">
@@ -79,6 +80,6 @@
     <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.26100.1742" PrivateAssets="all" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\FTR-RK Software\FTR-RK Software.vcxproj" />
+    <ProjectReference Include="..\RemoteKeys\RemoteKeys.vcxproj" />
   </ItemGroup>
 </Project>

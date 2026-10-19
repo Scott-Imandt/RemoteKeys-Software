@@ -12,7 +12,7 @@
 /* Thread 2 Main logic thread
 *		Responsibility: monitors the que and executes the windows API commands for window selection and keyboard execution
 		
-		logic: when the command appears in the que this thread calls the windowcontroller to find FTR reportera nd input emulation to send keys
+		logic: when the command appears in the que this thread calls the windowcontroller to find FTR reporter and input emulation to send keys
 */
 
 /* Thread 3 Logging Thread
@@ -29,6 +29,8 @@
 #include <psapi.h>
 #include <stdbool.h>
 
+#define MAX_MACRO_KEYS 8 // Define a max limit for key's to be pressed per action
+
 //AppState is a high level tracking of what the program is doing a the current time
 typedef enum AppState {
 	STATE_UNKNOWN = 0,		// Unknown state to cause panic
@@ -42,21 +44,22 @@ typedef enum AppState {
 typedef struct AppConfig {
 	int comPortNumber;				//The COM Port to open for connection
 	int baudRate;					//The baud rate to use to communicate with the device
-	struct keyCommand* commands;	//Dynamic Array of your key mappings
+	struct KeyCommand* commands;	//Dynamic Array of your key mappings
 	int commandCount;				//The total number of mappings loaded from the INI (6 max rn)
 };
 
-//represent the mapping of  a single keyto trigger a windows action
+//represent the mapping of  a single key to trigger a windows action
 typedef struct KeyCommand {
-	char triggerID[6]; // Serial data string send from the esp32
+	char triggerID[11]; // Serial data string send from the esp32
 	char focusApplication[32]; // the name of the application to send commands too
-	int virtualKeyCode;// the windows hex equvilent for executing the command
-	int modifierFlags; // For id shift, Ctrl, Alt should be held at any point
+	int virtualKeyCode[MAX_MACRO_KEYS];// the windows hex equvilent for executing the command as an array for multiple key presses per action
+	int modifierFlags[MAX_MACRO_KEYS]; // For id shift, Ctrl, Alt should be held at any point. A matching array for key presses to match the virtual keycode array
+	int keyCount; // Total keys that will be pressed for a given action
 };
 
 //This is the thread safe que the serial thread writes here and the main thread reads here
 typedef struct SharedBuffer {
-	char pendingCommand[16];// the last command recieved
+	char pendingCommand[64];// the last command recieved
 	bool hasNewData; // a flag to tell the main thread ther is work to preform
 	CRITICAL_SECTION lock; // the windows sync object to prevent race conditions
 };
@@ -65,7 +68,7 @@ typedef struct SharedBuffer {
 typedef struct GlobalContext {
 	struct AppConfig config;	// the loaded INI Settings
 	struct SharedBuffer buffer; // the communication bridge
-	enum AppState currentState;	// The life cycele status
+	enum AppState currentState;	// The life cycle status
 	HANDLE hComPort;			// The system handle for the esp32 connection
 	FILE* logFile;				// The handle for the logging file
 

@@ -27,7 +27,7 @@
     <ClCompile Include="src\logging-system.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\xml-parser.c">
+    <ClCompile Include="src\ini-parser.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -44,7 +44,7 @@
     <ClInclude Include="include\logging-system.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\xml-parser.h">
+    <ClInclude Include="include\ini-parser.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

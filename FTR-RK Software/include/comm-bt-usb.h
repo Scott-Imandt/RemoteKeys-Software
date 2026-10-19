@@ -1,1 +1,0 @@
-//this is the header file for the comm-bt-usb.c
