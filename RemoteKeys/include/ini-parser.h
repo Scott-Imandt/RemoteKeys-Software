@@ -8,13 +8,20 @@
 #include "globals.h"
 #include <stdbool.h>
 
+// Struct for default values used by the INI loader and INI writer
+typedef struct IniDefaults {
+	int comPort;
+	int baudRate;
+	bool loggingEnabled;
+} IniDefaults;
+
 typedef enum iniState {
 	INI_STATE_UNKNOWN = 0,
 	INI_STATE_SUCCESS =-1, // Transition state to reach State_listening
 	INI_STATE_FILE_NOT_FOUND=-2, // Call create_default_config
 	INI_STATE_MEMORY_ERROR=-3,// Log "Out of Memory" and close program
 	INI_STATE_SYNTAX_ERROR=-4 // Log "invalid INI and exit"
-};
+} iniState;
 
 
 /*
@@ -31,11 +38,8 @@ int create_default_config(const char* filename);
 
 /*
 * Opens the file
-*		return error state if not possible
 * Counts the key entries
-*		return error stae if not possible
 * Malloc memory for the app config keyCommands array
-*		return error state if not possible
 * populates the GlobalCONTEXT with the data read from the INI file
 * 
 */
@@ -50,3 +54,18 @@ int load_config(struct GlobalContext* GLOBALCONTEXT, const char* filename);
 * Set ctx->config.commandCount = 0;.
 */
 void free_config(struct GlobalContext* GLOBALCONTEXT);
+
+/*
+ * Populate GLOBALCONTEXT with module default values for the configuration.
+ * This can be used to apply the current defaults without reading a file.
+ */
+void set_default_config(struct GlobalContext* GLOBALCONTEXT);
+
+/*
+ * Change the defaults used by this module when creating/loading configs.
+ * Call ini_set_defaults early in initialization to override the built-in
+ * defaults (affects create_default_config and set_default_config behavior).
+ * Set module-default values using a struct. Pass a pointer to an IniDefaults
+ * describing the desired defaults. If 'defaults' is NULL the call is ignored.
+ */
+void ini_set_defaults(const IniDefaults* defaults);
