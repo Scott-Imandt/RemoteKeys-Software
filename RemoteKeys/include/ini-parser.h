@@ -25,7 +25,7 @@ typedef enum iniState {
 
 
 /*
-*Checks if the config.ini file exists int he local directory and if it is valid[port number in range, triggerid in range, etc]
+*Checks if the config.ini file exists in the local directory and if it is valid[port number in range, triggerid in range, etc]
 *Returns TRUE if found, false otherwise
 */
 bool config_exists(const char* filename);

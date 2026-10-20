@@ -10,8 +10,8 @@
 
 // Forward declarations for clean structure
 bool start_worker_threads(struct GlobalContext* ctx, HANDLE* threads); // This Creates worker threads for logging and serial listenting
-void handle_runtime_monitoring(struct GlobalContext* ctx); // this handles the keyboard commands for KeyCommand Execution
-void setup_example_commands(struct AppConfig* config);
+//void handle_runtime_monitoring(struct GlobalContext* ctx); // this handles the keyboard commands for KeyCommand Execution
+//void setup_example_commands(struct AppConfig* config);
 void run_main_loop(struct GlobalContext* ctx, struct AppConfig* config);
 
 
@@ -37,13 +37,8 @@ int main() {
     // ==========================================
 
     // Create Temporary configuration for testing with Comm-bt-usb
-    ctx.config.baudRate = CBR_115200;
-    ctx.config.comPortNumber = 5; //  For Bluetooth Set to outgoing Port
 
-    //Create keyboardCommands
-
-    setup_example_commands(&ctx.config);
-
+    load_config(&ctx, ""); // Possible permission problems with creating file
 
     // initialize the COM connection and pass the handle to the global context
 
@@ -59,16 +54,14 @@ int main() {
     // PHASE 3: THREAD CREATION & MONITORING
     //          Create 2 Additional Threads for a total of three threads running
     //              1-Main Thread(Responsibility: monitors the que and executes the windows API commands for window selection and keyboard execution)
-    //             *2-Serial Listener Thread(Repsonsiblilty is to continously poll the com port for data comming from the esp32)
+    //              2-Serial Listener Thread(Repsonsiblilty is to continously poll the com port for data comming from the esp32)
     //             *3-Logging Thread(Responsibilty: When enabled by the INI it records data based on device status and execution and periodicly flushed the data to a log file)
     // ==========================================
 
-    HANDLE worker_threads[2] = { NULL, NULL };
+    HANDLE worker_threads[1] = { NULL }; // !!need to update to create the logging thread here!!
 
     start_worker_threads(&ctx, worker_threads);
-
-
-
+    
     // ==========================================
     // PHASE 4: KeyCommand Execcution
     //          Process recieved commands and execute 
@@ -76,9 +69,7 @@ int main() {
     // ==========================================
 
 
-
     run_main_loop(&ctx, &ctx.config);
-
 
 
     // ==========================================
@@ -142,70 +133,28 @@ bool start_worker_threads(struct GlobalContext* ctx, HANDLE* threads) {
     return (threads[0] != NULL);
 }
 
-void setup_example_commands(struct AppConfig* config) {
-    config->commandCount = 5;
-    // calloc takes two separate arguments instead of multiplying them!
-    config->commands = (struct KeyCommand*)calloc(config->commandCount, sizeof(struct KeyCommand));
-
-    if (config->commands == NULL) {
-        printf("Memory allocation failed!\n");
-        return;
-    }
-
-    // ==========================================
-    // EXAMPLE 1: Trigger_27 -> Global "Copy" Command (Ctrl + C)
-    // ==========================================
-    // Notice the size limit passed to strncpy_s is now 12 to match the struct!
-    strncpy_s(config->commands[0].triggerID, 12, "TRIGGER_27", _TRUNCATE);
-    strncpy_s(config->commands[0].focusApplication, 32, "GLOBAL", _TRUNCATE);
-    config->commands[0].keyCount = 1;
-
-    config->commands[0].virtualKeyCode[0] = 'C';
-    config->commands[0].modifierFlags[0] = MAT_MOD_CTRL;
-
-
-    // ==========================================
-    // EXAMPLE 2: Trigger_14 -> Find Spotify and Play music
-    // ==========================================
-    strncpy_s(config->commands[1].triggerID, 12, "TRIGGER_14", _TRUNCATE);
-    strncpy_s(config->commands[1].focusApplication, 32, "Spotify Premium", _TRUNCATE);
-    config->commands[1].keyCount = 1;
-
-    config->commands[1].virtualKeyCode[0] = VK_SPACE;
-    //config->commands[1].modifierFlags[0] = VK_CONTROL | VK_SHIFT;
-
-
-    // ==========================================
-    // EXAMPLE 3: Trigger_25 -> Global "Paste" Command (Ctrl + V)
-    // ==========================================
-    strncpy_s(config->commands[2].triggerID, 12, "TRIGGER_25", _TRUNCATE);
-    strncpy_s(config->commands[2].focusApplication, 32, "GLOBAL", _TRUNCATE);
-    config->commands[2].keyCount = 1;
-
-    config->commands[2].virtualKeyCode[0] = 'V';
-    config->commands[2].modifierFlags[0] = MAT_MOD_CTRL;
-
-    // ==========================================
-    // EXAMPLE 4: TRIGGER_26 -> Open Task Manager (Ctrl + Shift + Q)
-    // ==========================================
-    strncpy_s(config->commands[3].triggerID, 12, "TRIGGER_26", _TRUNCATE);
-    strncpy_s(config->commands[3].focusApplication, 32, "GLOBAL", _TRUNCATE);
-    config->commands[3].keyCount = 1; // 1 multi-key execution event
-
-    config->commands[3].virtualKeyCode[0] = VK_ESCAPE;
-    config->commands[3].modifierFlags[0] = MAT_MOD_CTRL | MAT_MOD_SHIFT; // Combined flags!
-
-    // ==========================================
-    // EXAMPLE 5: TRIGGER_33 -> Show File Explorer (Win + E)
-    // ==========================================
-    strncpy_s(config->commands[4].triggerID, 12, "TRIGGER_33", _TRUNCATE);
-    strncpy_s(config->commands[4].focusApplication, 32, "GLOBAL", _TRUNCATE); 
-    config->commands[4].keyCount = 1;
-
-    config->commands[4].virtualKeyCode[0] = 'E';
-    config->commands[4].modifierFlags[0]  = MAT_MOD_WIN; // Triggers the Windows key modification
-
-}
+//void setup_example_commands(struct AppConfig* config) {
+//    config->commandCount = 5;
+//    // calloc takes two separate arguments instead of multiplying them!
+//    config->commands = (struct KeyCommand*)calloc(config->commandCount, sizeof(struct KeyCommand));
+//
+//    if (config->commands == NULL) {
+//        printf("Memory allocation failed!\n");
+//        return;
+//    }
+//
+//    // ==========================================
+//    // EXAMPLE 1: Trigger_27 -> Global "Copy" Command (Ctrl + C)
+//    // ==========================================
+//    // Notice the size limit passed to strncpy_s is now 12 to match the struct!
+//    //strncpy_s(config->commands[0].triggerID, 12, "TRIGGER_27", _TRUNCATE);
+//    //strncpy_s(config->commands[0].focusApplication, 32, "GLOBAL", _TRUNCATE);
+//    //config->commands[0].keyCount = 1;
+//
+//    //config->commands[0].virtualKeyCode[0] = 'C';
+//    //config->commands[0].modifierFlags[0] = MAT_MOD_CTRL;
+//
+//}
 
 void run_main_loop(struct GlobalContext* ctx, struct AppConfig* config) {
     printf("[SYSTEM] Main execution loop engaged. Standing by for triggers...\n");
