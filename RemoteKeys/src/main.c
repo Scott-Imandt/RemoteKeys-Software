@@ -38,7 +38,7 @@ int main() {
 
     // Create Temporary configuration for testing with Comm-bt-usb
 
-    load_config(&ctx, ""); // Possible permission problems with creating file
+    load_config(&ctx, "CONFIG.INI"); // Possible permission problems with creating file
 
     // initialize the COM connection and pass the handle to the global context
 
@@ -196,8 +196,8 @@ void run_main_loop(struct GlobalContext* ctx, struct AppConfig* config) {
                 // Compare the incoming trigger (e.g. "Trigger_26") to our macro rules
                 if (strncmp(local_trigger, config->commands[i].triggerID, 12) == 0) {
 
-                    printf("[EXEC] Match caught for %s! Routing to: %s\n",
-                        local_trigger, config->commands[i].focusApplication);
+                    printf("[EXEC] Match caught for %s (%s)! Routing to: %s\n",
+                        config->commands[i].commandName, local_trigger, config->commands[i].focusApplication);
 
                     // 4. The Execution: Force target focus and inject keyboard inputs
                     keyboard_execute_command(&config->commands[i]);

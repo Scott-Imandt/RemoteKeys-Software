@@ -51,7 +51,6 @@ HWND window_control_focus(const char* window_title)
 
     }
     else {
-        printf("[WARN] Could not find application window: %s\n", window_title);
         return -1;
     }
 
@@ -157,9 +156,14 @@ int keyboard_execute_command(const struct KeyCommand* cmd)
 
     // 1. Shift focus to the target app (if not GLOBAL) if unable to find target window return -1 error and dont fire key sequence
     if (window_control_focus(cmd->focusApplication) == -1) {
+        printf("[ERROR] Command '%s' (%s) aborted: target window not found\n", cmd->commandName, cmd->triggerID);
         return -1;
     }
 
     // 2. Fire the sequence!
-    return keyboard_send_sequence(cmd->virtualKeyCode, cmd->modifierFlags, cmd->keyCount);
+    int result = keyboard_send_sequence(cmd->virtualKeyCode, cmd->modifierFlags, cmd->keyCount);
+    if (result != 0) {
+        printf("[ERROR] Command '%s' (%s) failed to execute\n", cmd->commandName, cmd->triggerID);
+    }
+    return result;
 }

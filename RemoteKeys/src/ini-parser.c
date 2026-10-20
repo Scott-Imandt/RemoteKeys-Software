@@ -90,14 +90,15 @@ int create_default_config(const char* filename) {
 	if (writef_or_fail(f, "[Logging]\n") < 0) goto write_error;
 	if (writef_or_fail(f, "Enabled=%s\n\n", static_default_loggingEnabled ? "true" : "false") < 0) goto write_error;
 	if (writef_or_fail(f, "[Keys]\n") < 0) goto write_error;
-	if (writef_or_fail(f, "; Format: TriggerID,Application,Key1|Key2|...,Mod1|Mod2|...\n") < 0) goto write_error;
+	if (writef_or_fail(f, "; Format: Name,TriggerID,Application,Key1|Key2|...,Mod1|Mod2|...\n") < 0) goto write_error;
+	if (writef_or_fail(f, "; Name is shown in debug messages (max 31 chars, no commas).\n") < 0) goto write_error;
 	if (writef_or_fail(f, "; Keys: A-Z, 0-9, SPACE, ESCAPE, ENTER, TAB, F1-F24, arrows, MEDIA_PLAY_PAUSE, or 0xNN\n") < 0) goto write_error;
 	if (writef_or_fail(f, "; Mods: one entry per key, combine with '+' (CTRL+SHIFT), or NONE. Application GLOBAL = no focus change.\n") < 0) goto write_error;
-	if (writef_or_fail(f, "TRIGGER_27,GLOBAL,C,CTRL\n") < 0) goto write_error;
-	if (writef_or_fail(f, "TRIGGER_14,Spotify Premium,SPACE,NONE\n") < 0) goto write_error;
-	if (writef_or_fail(f, "TRIGGER_25,GLOBAL,V,CTRL\n") < 0) goto write_error;
-	if (writef_or_fail(f, "TRIGGER_26,GLOBAL,ESCAPE,CTRL+SHIFT\n") < 0) goto write_error;
-	if (writef_or_fail(f, "TRIGGER_33,GLOBAL,E,WIN\n") < 0) goto write_error;
+	if (writef_or_fail(f, "Copy,TRIGGER_27,GLOBAL,C,CTRL\n") < 0) goto write_error;
+	if (writef_or_fail(f, "Spotify Play/Pause,TRIGGER_14,Spotify Premium,SPACE,NONE\n") < 0) goto write_error;
+	if (writef_or_fail(f, "Paste,TRIGGER_25,GLOBAL,V,CTRL\n") < 0) goto write_error;
+	if (writef_or_fail(f, "Task Manager,TRIGGER_26,GLOBAL,ESCAPE,CTRL+SHIFT\n") < 0) goto write_error;
+	if (writef_or_fail(f, "File Explorer,TRIGGER_33,GLOBAL,E,WIN\n") < 0) goto write_error;
 
 	fclose(f);
 	return INI_STATE_SUCCESS;
@@ -177,27 +178,31 @@ static bool parse_modifier_token(char* tok, int* out) {
 	return true;
 }
 
-// parses one [Keys] line: TriggerID,Application,Key1|Key2,Mod1|Mod2
+// parses one [Keys] line: Name,TriggerID,Application,Key1|Key2,Mod1|Mod2
+#define KEY_LINE_FIELDS 5
+enum { F_NAME, F_TRIGGER, F_APP, F_KEYS, F_MODS };
 static bool parse_key_line(char* line, struct KeyCommand* cmd) {
-	char* fields[4];
+	char* fields[KEY_LINE_FIELDS];
 	int n = 0;
 	char* p = line;
 	fields[n++] = p;
-	while (n < 4 && (p = strchr(p, ',')) != NULL) {
+	while (n < KEY_LINE_FIELDS && (p = strchr(p, ',')) != NULL) {
 		*p++ = '\0';
 		fields[n++] = p;
 	}
-	if (n < 4) return false;
-	for (int i = 0; i < 4; i++) fields[i] = trim(fields[i]);
+	if (n < KEY_LINE_FIELDS) return false;
+	for (int i = 0; i < KEY_LINE_FIELDS; i++) fields[i] = trim(fields[i]);
 
 	memset(cmd, 0, sizeof(*cmd));
-	if (!*fields[0] || strlen(fields[0]) >= sizeof(cmd->triggerID)) return false;
-	if (!*fields[1] || strlen(fields[1]) >= sizeof(cmd->focusApplication)) return false;
-	strcpy_s(cmd->triggerID, sizeof(cmd->triggerID), fields[0]);
-	strcpy_s(cmd->focusApplication, sizeof(cmd->focusApplication), fields[1]);
+	if (!*fields[F_NAME] || strlen(fields[F_NAME]) >= sizeof(cmd->commandName)) return false;
+	if (!*fields[F_TRIGGER] || strlen(fields[F_TRIGGER]) >= sizeof(cmd->triggerID)) return false;
+	if (!*fields[F_APP] || strlen(fields[F_APP]) >= sizeof(cmd->focusApplication)) return false;
+	strcpy_s(cmd->commandName, sizeof(cmd->commandName), fields[F_NAME]);
+	strcpy_s(cmd->triggerID, sizeof(cmd->triggerID), fields[F_TRIGGER]);
+	strcpy_s(cmd->focusApplication, sizeof(cmd->focusApplication), fields[F_APP]);
 
 	char* ctx = NULL;
-	for (char* k = strtok_s(fields[2], "|", &ctx); k; k = strtok_s(NULL, "|", &ctx)) {
+	for (char* k = strtok_s(fields[F_KEYS], "|", &ctx); k; k = strtok_s(NULL, "|", &ctx)) {
 		if (cmd->keyCount >= MAX_MACRO_KEYS) return false;
 		if (!parse_key_token(trim(k), &cmd->virtualKeyCode[cmd->keyCount])) return false;
 		cmd->keyCount++;
@@ -206,7 +211,7 @@ static bool parse_key_line(char* line, struct KeyCommand* cmd) {
 
 	int modCount = 0;
 	ctx = NULL;
-	for (char* m = strtok_s(fields[3], "|", &ctx); m; m = strtok_s(NULL, "|", &ctx)) {
+	for (char* m = strtok_s(fields[F_MODS], "|", &ctx); m; m = strtok_s(NULL, "|", &ctx)) {
 		if (modCount >= cmd->keyCount) return false;   // more modifiers than keys
 		if (!parse_modifier_token(trim(m), &cmd->modifierFlags[modCount])) return false;
 		modCount++;
@@ -284,6 +289,8 @@ int load_config(struct GlobalContext* GLOBALCONTEXT, const char* filename) {
 				free_config(GLOBALCONTEXT);
 				return INI_STATE_MEMORY_ERROR;
 			}
+			snprintf(msg, sizeof(msg), "[INI] Loaded command '%s' (%s)\n", cmd.commandName, cmd.triggerID);
+			OutputDebugStringA(msg);
 			continue;
 		}
 

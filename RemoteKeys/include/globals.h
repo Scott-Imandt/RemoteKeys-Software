@@ -50,7 +50,8 @@ typedef struct AppConfig {
 
 //represent the mapping of  a single key to trigger a windows action
 typedef struct KeyCommand {
-	char triggerID[11]; // Serial data string send from the esp32
+	char commandName[32]; // Human readable Name for a given Key Command
+	char triggerID[11]; // Serial data string sent from the esp32
 	char focusApplication[32]; // the name of the application to send commands too
 	int virtualKeyCode[MAX_MACRO_KEYS];// the windows hex equvilent for executing the command as an array for multiple key presses per action
 	int modifierFlags[MAX_MACRO_KEYS]; // For id shift, Ctrl, Alt should be held at any point. A matching array for key presses to match the virtual keycode array
