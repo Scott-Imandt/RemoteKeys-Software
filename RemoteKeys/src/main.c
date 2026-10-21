@@ -38,7 +38,7 @@ int main() {
 
     // Create Temporary configuration for testing with Comm-bt-usb
 
-    load_config(&ctx, "CONFIG.INI"); // Possible permission problems with creating file
+    load_config(&ctx, "C:\\Remote Keys\\CONFIG.INI"); // Possible permission problems with creating file
 
     // initialize the COM connection and pass the handle to the global context
 

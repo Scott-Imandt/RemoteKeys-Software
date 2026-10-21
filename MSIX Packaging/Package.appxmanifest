@@ -8,12 +8,12 @@
 
   <Identity
     Name="fd7a05a0-d9c1-4ca0-bf88-25e7f51809ba"
-    Publisher="CN=Unified Court System 10JD I.T Department"
-    Version="0.0.1.0" />
+    Publisher="CN=Unified Court System 10JDS I.T Department"
+    Version="1.0.0.0" />
 
   <Properties>
-    <DisplayName>MSIX Packaging</DisplayName>
-    <PublisherDisplayName>Unified Court System 10JD I.T Department</PublisherDisplayName>
+    <DisplayName>Remote Keys</DisplayName>
+    <PublisherDisplayName>Unified Court System 10JDS I.T Department</PublisherDisplayName>
     <Logo>Images\StoreLogo.png</Logo>
   </Properties>
 
@@ -31,12 +31,12 @@
       Executable="$targetnametoken$.exe"
       EntryPoint="$targetentrypoint$">
       <uap:VisualElements
-        DisplayName="RemoteKeys"
+        DisplayName="Remote Keys"
         Description="Companion Application to allow interface between devices"
         BackgroundColor="transparent"
         Square150x150Logo="Images\Square150x150Logo.png"
         Square44x44Logo="Images\Square44x44Logo.png">
-        <uap:DefaultTile Wide310x150Logo="Images\Wide310x150Logo.png" />
+        <uap:DefaultTile Wide310x150Logo="Images\Wide310x150Logo.png"  Square71x71Logo="Images\SmallTile.png" Square310x310Logo="Images\LargeTile.png"/>
         <uap:SplashScreen Image="Images\SplashScreen.png" />
       </uap:VisualElements>
     </Application>
